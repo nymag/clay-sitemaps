@@ -2,14 +2,14 @@
 
 const components = require('amphora').components,
   _ = require('lodash'),
-  through2 = require('through2');
+  through2 = require('through2'),
+  throughMap = require('through2-map');
 
 function pagesToXML(locals, multiplex) {
-  return through2.obj(function (item, enc, cb) {
+  return throughMap.obj(item => {
     const cmptXml = getPageXML(item.pageRef, item.pageData, locals, multiplex);
 
-    this.push(`<url><loc>${item.pageData.url}</loc>${cmptXml}</url>`);
-    cb();
+    return `<url><loc>${item.pageData.url}</loc>${cmptXml}</url>`;
   });
 }
 
@@ -41,14 +41,7 @@ function getCmptXML(multiplex, locals, cmptData, reference) {
  * @return {[type]} [description]
  */
 function pagesToText() {
-  return through2.obj(function (item, enc, cb) {
-    try {
-      this.push(item.pageData.url + '\n');
-    } catch (ex) {
-      console.log(__filename, 'warn', 'SitemapTextTransform', ex.message);
-    }
-    cb();
-  });
+  return throughMap.obj(item => item.pageData.url + '\n');
 }
 
 /**
@@ -74,6 +67,12 @@ function addBookends(prelude, postlude) {
   });
 };
 
-module.exports.addBookends = addBookends;
-module.exports.pagesToText = pagesToText;
-module.exports.pagesToXML = pagesToXML;
+module.exports = {
+  pages: {
+    toXML: pagesToXML,
+    toText: pagesToText
+  },
+  strings: {
+    addBookends: addBookends
+  }
+};

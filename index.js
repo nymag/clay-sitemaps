@@ -1,11 +1,14 @@
 'use strict';
 
-const PageStreams = require('./page-streams'),
-  sitemapStreams = require('./sitemap-streams'),
-  _ = require('lodash'),
+const _ = require('lodash'),
   multiplexTemplates = require('multiplex-templates'),
   handlebars = require('handlebars'),
-  ARTICLE_XML_PRELUDE = require('./constants').ARTICLE_XML_PRELUDE;
+  streamPages = require('./page-streams').streamPages,
+  composePages = require('./page-streams').composePages,
+  filters = require('./filters'),
+  transforms = require('./transforms'),
+  DEFAULT_XML_PRELUDE = require('./constants').DEFAULT_XML_PRELUDE,
+  DEFAULT_XML_POSTLUDE = require('./constants').DEFAULT_XML_POSTLUDE;
 
 /**
  * Returns an Express router for an article sitemap.
@@ -20,38 +23,35 @@ const PageStreams = require('./page-streams'),
  * @return {object} An express.Router()
  */
 function generateSitemap(amphora, opts) {
-  const pageStreams = PageStreams(amphora);
 
   opts = _.defaults(opts, {
     engines: {handlebars: handlebars},
-    xmlPrelude: ARTICLE_XML_PRELUDE,
-    xmlPostlude: '</urlset>',
-    xmlTransform: (locals) => sitemapStreams.pagesToXML(locals, multiplexTemplates(opts.engines))
+    xmlPrelude: DEFAULT_XML_PRELUDE,
+    xmlPostlude: DEFAULT_XML_POSTLUDE,
+    xmlTransform: (locals) => transforms.pages.toXML(locals, multiplexTemplates(opts.engines))
   });
 
   return {
     txt: function (req, res) {
       res.type('text');
-      pageStreams.streamPages(res.locals.site.prefix)
-        .pipe(pageStreams.filterPublished())
-        .pipe(pageStreams.filterPublic())
-        .pipe(sitemapStreams.pagesToText(res.locals))
+      streamPages(amphora, res.locals.site.prefix)
+        .pipe(filters.published())
+        .pipe(filters.public(amphora))
+        .pipe(transforms.pages.toText(res.locals))
         .pipe(res);
     },
     xml: function (req, res) {
       res.type('xml');
-      pageStreams.streamPages(res.locals.site.prefix)
-        .pipe(pageStreams.filterPublished())
-        .pipe(pageStreams.filterPublic())
-        .pipe(pageStreams.composePages(res.locals))
+      streamPages(amphora, res.locals.site.prefix)
+        .pipe(filters.published())
+        .pipe(filters.public(amphora))
+        .pipe(composePages(amphora, res.locals))
         .pipe(opts.xmlTransform(res.locals))
-        .pipe(sitemapStreams.addBookends(opts.xmlPrelude, opts.xmlPostlude))
+        .pipe(transforms.strings.addBookends(opts.xmlPrelude, opts.xmlPostlude))
         .pipe(res);
     }
   };
 };
 
-
+module.exports.filters = filters;
 module.exports.generateSitemap = generateSitemap;
-module.exports.pageStreams = PageStreams;
-module.exports.sitemapStreams = sitemapStreams;
