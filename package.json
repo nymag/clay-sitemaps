@@ -1,0 +1,35 @@
+{
+  "name": "clay-sitemaps",
+  "version": "0.0.1",
+  "description": "Add sitemaps to Clay sites.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nymag/clay-sitemaps.git"
+  },
+  "keywords": [
+    "clay",
+    "amphora",
+    "sitemaps"
+  ],
+  "author": "Chris Kirk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nymag/clay-sitemaps/issues"
+  },
+  "homepage": "https://github.com/nymag/clay-sitemaps#readme",
+  "dependencies": {
+    "amphora": "^2.11.0",
+    "express": "^4.14.1",
+    "glob": "^7.1.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.17.1",
+    "multiplex-templates": "^1.3.0",
+    "pumpify": "^1.3.5",
+    "through2": "^2.0.3",
+    "xml2js": "^0.4.17"
+  }
+}
