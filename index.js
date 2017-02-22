@@ -3,12 +3,11 @@
 const _ = require('lodash'),
   multiplexTemplates = require('multiplex-templates'),
   handlebars = require('handlebars'),
-  pumpify = require('pumpify'),
   streamPages = require('./lib/stream-pages'),
   Filters = require('./lib/filters'),
   Transforms = require('./lib/transforms'),
-  DEFAULT_XML_PRELUDE = require('./constants').DEFAULT_XML_PRELUDE,
-  DEFAULT_XML_POSTLUDE = require('./constants').DEFAULT_XML_POSTLUDE;
+  DEFAULT_XML_PRELUDE = require('./lib/constants').DEFAULT_XML_PRELUDE,
+  DEFAULT_XML_POSTLUDE = require('./lib/constants').DEFAULT_XML_POSTLUDE;
 
 /**
  * Generate a standard text sitemap middleware for Clay. The page URL of each page is included.
@@ -54,13 +53,11 @@ function standardXML(amphora, opts) {
   return (req, res) => {
     res.type('xml');
     streamPages(amphora, res.locals.site.prefix)
-      .pipe(pumpify.obj([
-        filters.published(),
-        filters.public(),
-        transforms.pages.compose(res.locals),
-        transforms.pages.toXML(res.locals, multiplexTemplates(opts.engines)),
-        transforms.strings.addBookends(opts.prelude, opts.postlude)
-      ].filter(_.identity)))
+      .pipe(filters.published())
+      .pipe(filters.public())
+      .pipe(transforms.pages.compose(res.locals))
+      .pipe(transforms.pages.toXML(res.locals, multiplexTemplates(opts.engines)))
+      .pipe(transforms.strings.addBookends(opts.prelude, opts.postlude))
       .pipe(res);
   };
 }

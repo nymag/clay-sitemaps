@@ -2,10 +2,7 @@
 
 A suite a tools for generating sitemaps for Clay sites.
 
-Clay-sitemaps provides two "standard" sitemap middleware, one for text and one for XML, that can get
-you up and running quickly.
-
-It also provides utilities that can help you create your own sitemap logic.
+Clay-sitemaps provides two "standard" sitemap middleware, one for text and one for XML, that can get you up and running quickly. It also provides utilities that can help you create your own sitemap logic.
 
 ## Quick Start
 
@@ -15,18 +12,17 @@ const sitemaps = require('clay-sitemaps')(someAmphoraInstance);
 app
   .get('/sitemap.txt', sitemaps.standardText())
   .get('/sitemap.xml', sitemaps.standardXML({
-    engines: { // engines for rendering sitemap template
+    engines: { // engines for rendering sitemap templates
       handlebars: yourHandlebarsEngine
     }
   }));
 ```
 
-This will create a textual sitemap at `/sitemap.txt` that includes URLs of published,
-public pages.
+This will create a textual sitemap at `/sitemap.txt` that includes URLs of published, public pages.
 
-It will also create an XML sitemap at `/sitemap.xml` that includes published, public pages. Each
-page will appear as a `<url>` block with a `<loc>` set to the page's `url` property. Additionally,
-the `sitemap` template of each component on that page will be included in that block.
+It will also create an XML sitemap at `/sitemap.xml` that includes published, public pages. Each page will appear as a `<url>` block with a `<loc>` set to the page's `url` property. Additionally, the `sitemap` template of each component on that page will be included in that block.
+
+
 
 ## Advanced usage
 
