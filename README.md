@@ -1,6 +1,6 @@
 # clay-sitemaps
 
-A suite a tools for generating sitemaps for Clay sites.
+A suite of tools for generating sitemaps for Clay sites.
 
 Clay-sitemaps provides two "standard" sitemap middleware, one for text and one for XML, that can get you up and running quickly. It also provides utilities that can help you create your own sitemap logic.
 
@@ -30,7 +30,7 @@ You can also use the functions behind clay-sitemaps to construct your own sitema
 
 ### sitemaps.streamPages(prefix) ###
 
-Creates an object stream of ALL pages in amphora with `prefix`. These objects look like:
+Creates an object stream of ALL pages in Amphora with `prefix`. These objects look like:
 
 ```
 {
