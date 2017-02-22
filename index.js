@@ -52,8 +52,6 @@ function standardXML(amphora, opts) {
     engines: handlebars
   });
 
-  console.log('opts: ', opts);
-
   return (req, res) => {
     res.type('xml');
     streamPages(amphora, res.locals.site.prefix)
