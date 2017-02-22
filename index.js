@@ -44,11 +44,15 @@ function standardXML(amphora, opts) {
   const filters = Filters(amphora),
     transforms = Transforms(amphora);
 
+  opts = opts || {};
+
   _.defaults(opts, {
     prelude: DEFAULT_XML_PRELUDE,
     postlude: DEFAULT_XML_POSTLUDE,
     engines: handlebars
   });
+
+  console.log('opts: ', opts);
 
   return (req, res) => {
     res.type('xml');
