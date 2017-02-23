@@ -3,6 +3,7 @@
 const _ = require('lodash'),
   multiplexTemplates = require('multiplex-templates'),
   handlebars = require('handlebars'),
+  express = require('express'),
   streamPages = require('./lib/stream-pages'),
   Filters = require('./lib/filters'),
   Transforms = require('./lib/transforms'),
@@ -64,6 +65,12 @@ function standardXML(amphora, opts) {
   };
 }
 
+function middleware(amphora, xmlOpts) {
+  return express.Router()
+    .get('/sitemap.txt', standardText(amphora))
+    .get('/sitemap.xml', standardXML(amphora, xmlOpts));
+}
+
 /**
  * Binds amphora to each method as necessary so devs don't
  * have to keep passing it around on the outside.
@@ -72,6 +79,7 @@ function standardXML(amphora, opts) {
  */
 module.exports = function (amphora) {
   return {
+    middleware: middleware.bind(this, amphora),
     standardText: standardText.bind(this, amphora),
     standardXML: standardXML.bind(this, amphora),
     streamPages: streamPages.bind(this, amphora),

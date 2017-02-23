@@ -9,26 +9,41 @@ Clay-sitemaps provides two "standard" sitemap middleware, one for text and one f
 ```
 const sitemaps = require('clay-sitemaps')(someAmphoraInstance);
 
-app
-  .get('/sitemap.txt', sitemaps.standardText())
-  .get('/sitemap.xml', sitemaps.standardXML({
-    engines: { // engines for rendering sitemap templates
-      handlebars: yourHandlebarsEngine
-    }
-  }));
+app.use(sitemaps.middleware());
 ```
 
 This will create a textual sitemap at `/sitemap.txt` that includes URLs of published, public pages.
 
-It will also create an XML sitemap at `/sitemap.xml` that includes published, public pages. Each page will appear as a `<url>` block with a `<loc>` set to the page's `url` property. Additionally, the `sitemap` template of each component on that page will be included in that block.
+It will also create an XML sitemap at `/sitemap.xml` that includes published, public pages. Each page will appear as an `<url>` element with a `<loc>` set to the page's `url` property. Additionally, the `sitemap` template of each component on that page will be rendered and included in that block.
 
+### sitemaps.middleware(xmlOpts)
 
+Generates standard "batteries included" middleware for clay sites, using `standardXML` and `standardText` routing functions. `xmlOpts` are passed to the former.
 
 ## Advanced usage
 
 You can also use the functions behind clay-sitemaps to construct your own sitemap generation logic.
 
-### sitemaps.streamPages(prefix) ###
+### Plug-and-play routing functions
+
+#### sitemaps.standardXML(options)
+
+Returns a routing function for displaying an XML sitemap. This XML sitemap includes published, public pages, and renders the `sitemap.xml` template of each component in each page.
+
+Options include:
+
+* **prelude**: String. String to prepend to the XML document before the first `<url>` element. See `lib/constants.js` for default.
+* **postlude**: String. String to prepend to the XML document after the last `<url>` element. Default is `</urlset>`
+* **engines**: Object. Engines for rendering the sitemap templates. Default is `{handlebars: require('handlebars')}`.
+
+#### sitemaps.standardText()
+
+Returns a routing function for displaying an textual sitemap.
+
+
+### Streaming functions
+
+#### sitemaps.streamPages(prefix)
 
 Creates an object stream of ALL pages in Amphora with `prefix`. These objects look like:
 
@@ -42,7 +57,7 @@ Creates an object stream of ALL pages in Amphora with `prefix`. These objects lo
 The `pageData` value is the page data **not** composed, i.e. it includes top-level component
 references but no component data.
 
-### Filters
+### Filter Streams
 
 Filters are functions that remove pages from the stream.
 
@@ -54,7 +69,7 @@ Returns a transform function that keeps only public pages from a pages stream.
 
 Returns a transform function that keeps only published pages from a pages stream.
 
-### Transforms
+### Transform Streams
 
 Transforms are functions that modify a stream of pages or strings.
 
