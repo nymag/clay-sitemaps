@@ -15,7 +15,7 @@
     "amphora",
     "sitemaps"
   ],
-  "author": "Chris Kirk",
+  "author": "New York Media",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/nymag/clay-sitemaps/issues"
@@ -36,5 +36,9 @@
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "sinon": "^1.17.7"
-  }
+  },
+  "engines": {
+    "node": "^4.0.0"
+  },
+  "engine-strict": true
 }
