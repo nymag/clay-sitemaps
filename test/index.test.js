@@ -15,15 +15,18 @@ const lib = require('../index')(require('amphora')),
     s.push(null);
     return s;
   },
-  expectObjects = (values) => {
+  expectValues = (values) => {
     let i = 0;
 
-    return (val) => expect(val).to.deep.equal(values[i++]);
-  },
-  expectStrings = (values) => {
-    let i = 0;
+    return (val) => {
+      const compare = values[i++];
 
-    return (val) => expect(val).to.equal(values[i++]);
+      if (typeof compare === 'object') {
+        expect(val).to.deep.equal(compare);
+      } else {
+        expect(val).to.equal(compare);
+      }
+    };
   };
 
 describe('stream-pages', function () {
@@ -52,7 +55,7 @@ describe('stream-pages', function () {
   describe('streamPages', function () {
     it ('Streams and parses pages', function (done) {
       lib.streamPages('/some/site/prefix')
-        .on('data', expectObjects([
+        .on('data', expectValues([
           {
             pageRef: '/foo/bar',
             pageData: {url: 'bar'}
@@ -71,7 +74,7 @@ describe('stream-pages', function () {
     it ('Filters out unpublished pages', function (done) {
       lib.streamPages('/some/site/prefix')
         .pipe(lib.filters.published())
-        .on('data', expectObjects([
+        .on('data', expectValues([
           {
             pageRef: '/baz/zar@published',
             pageData: {url: 'zar'}
@@ -86,7 +89,7 @@ describe('stream-pages', function () {
     it ('Transforms each page to text', function (done) {
       lib.streamPages('/some/site/prefix')
         .pipe(lib.transforms.pages.toText())
-        .on('data', expectStrings([
+        .on('data', expectValues([
           'bar\n',
           'zar\n'
         ]))
@@ -101,7 +104,7 @@ describe('stream-pages', function () {
       composer.composePage.onCall(1).returns(Promise.resolve({c: 'd'}));
       lib.streamPages('/some/site/prefix')
         .pipe(lib.transforms.pages.compose())
-        .on('data', expectObjects([
+        .on('data', expectValues([
           {
             pageRef: '/foo/bar',
             pageData: {
@@ -127,7 +130,7 @@ describe('stream-pages', function () {
       mockStream(['1','2','3'], false)
         .pipe(lib.transforms.strings.addBookends('start'))
         .setEncoding('utf8')
-        .on('data', expectStrings(['start','1','2','3']))
+        .on('data', expectValues(['start','1','2','3']))
         .on('end', () => done())
         .on('error', done);
     });
@@ -135,7 +138,7 @@ describe('stream-pages', function () {
       mockStream(['1','2','3'], false)
         .pipe(lib.transforms.strings.addBookends(null, 'end'))
         .setEncoding('utf8')
-        .on('data', expectStrings(['1','2','3','end']))
+        .on('data', expectValues(['1','2','3','end']))
         .on('end', () => done())
         .on('error', done);
     });
@@ -143,7 +146,7 @@ describe('stream-pages', function () {
       mockStream(['1','2','3'], false)
         .pipe(lib.transforms.strings.addBookends('start', 'end'))
         .setEncoding('utf8')
-        .on('data', expectStrings(['start', '1','2','3','end']))
+        .on('data', expectValues(['start', '1','2','3','end']))
         .on('end', () => done())
         .on('error', done);
     });
@@ -151,7 +154,7 @@ describe('stream-pages', function () {
       mockStream([], false)
       .pipe(lib.transforms.strings.addBookends('start', 'end'))
       .setEncoding('utf8')
-      .on('data', expectStrings(['start', 'end']))
+      .on('data', expectValues(['start', 'end']))
       .on('end', () => done())
       .on('error', done);
     });
@@ -183,7 +186,7 @@ describe('stream-pages', function () {
 
       stream
         .pipe(lib.transforms.pages.toXML({}, multiplex))
-        .on('data', expectStrings([
+        .on('data', expectValues([
           '<url><loc>http://a/url.html</loc><foo>bar</foo></url>'
         ]))
         .on('end', () => done())

@@ -1,9 +1,8 @@
 'use strict';
 
 const _ = require('lodash'),
-  multiplexTemplates = require('multiplex-templates'),
-  handlebars = require('handlebars'),
   express = require('express'),
+  handlebars = require('handlebars'),
   streamPages = require('./lib/stream-pages'),
   Filters = require('./lib/filters'),
   Transforms = require('./lib/transforms'),
@@ -43,15 +42,15 @@ function standardText(amphora) {
  */
 function standardXML(amphora, opts) {
   const filters = Filters(amphora),
-    transforms = Transforms(amphora);
-
-  opts = opts || {};
-
-  _.defaults(opts, {
-    prelude: DEFAULT_XML_PRELUDE,
-    postlude: DEFAULT_XML_POSTLUDE,
-    engines: handlebars
-  });
+    transforms = Transforms(amphora),
+    finalOpts = _.defaults({}, opts, {
+      prelude: DEFAULT_XML_PRELUDE,
+      postlude: DEFAULT_XML_POSTLUDE,
+      template: 'sitemap',
+      engines: {
+        handlebars: handlebars
+      }
+    });
 
   return (req, res) => {
     res.type('xml');
@@ -59,8 +58,8 @@ function standardXML(amphora, opts) {
       .pipe(filters.published())
       .pipe(filters.public())
       .pipe(transforms.pages.compose(res.locals))
-      .pipe(transforms.pages.toXML(res.locals, multiplexTemplates(opts.engines)))
-      .pipe(transforms.strings.addBookends(opts.prelude, opts.postlude))
+      .pipe(transforms.pages.toXML(res.locals, _.pick(finalOpts, ['template', 'engines'])))
+      .pipe(transforms.strings.addBookends(finalOpts.prelude, finalOpts.postlude))
       .pipe(res);
   };
 }
