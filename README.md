@@ -54,8 +54,7 @@ Creates an object stream of ALL pages in Amphora with `prefix`. These objects lo
 }
 ```
 
-The `pageData` value is the page data **not** composed, i.e. it includes top-level component
-references but no component data.
+The `pageData` value is the page data **not** composed, i.e. it includes top-level component references but no component data.
 
 ### Filter Streams
 
