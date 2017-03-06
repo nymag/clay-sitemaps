@@ -1,7 +1,6 @@
 'use strict';
 
 const _ = require('lodash'),
-  multiplexTemplates = require('multiplex-templates'),
   handlebars = require('handlebars'),
   express = require('express'),
   streamPages = require('./lib/stream-pages'),
@@ -50,7 +49,7 @@ function standardXML(amphora, opts) {
   _.defaults(opts, {
     prelude: DEFAULT_XML_PRELUDE,
     postlude: DEFAULT_XML_POSTLUDE,
-    engines: handlebars
+    engines: {handlebars: handlebars}
   });
 
   return (req, res) => {
@@ -59,7 +58,7 @@ function standardXML(amphora, opts) {
       .pipe(filters.published())
       .pipe(filters.public())
       .pipe(transforms.pages.compose(res.locals))
-      .pipe(transforms.pages.toXML(res.locals, multiplexTemplates(opts.engines)))
+      .pipe(transforms.pages.toXML(res.locals, opts.engines))
       .pipe(transforms.strings.addBookends(opts.prelude, opts.postlude))
       .pipe(res);
   };
@@ -84,6 +83,8 @@ module.exports = function (amphora) {
     standardXML: standardXML.bind(this, amphora),
     streamPages: streamPages.bind(this, amphora),
     filters: Filters(amphora),
-    transforms: Transforms(amphora)
+    transforms: Transforms(amphora),
+    defaultXmlPrelude: DEFAULT_XML_PRELUDE,
+    defaultXmlPostlude: DEFAULT_XML_POSTLUDE
   };
 };
