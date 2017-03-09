@@ -9,7 +9,7 @@ const lib = require('../index')(require('amphora')),
   composer = require('amphora').composer,
   stream = require('stream');
 
-function mockStream(chunks, objectMode){
+function mockStream(chunks, objectMode) {
   const s = new stream.Readable({objectMode: objectMode, encoding: objectMode ? null : 'utf8'});
 
   chunks.forEach(chunk => s.push(chunk));
