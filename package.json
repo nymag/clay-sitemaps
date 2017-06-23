@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/nymag/clay-sitemaps#readme",
   "dependencies": {
-    "amphora": "^2.11.0",
+    "amphora": "^3.0.0",
     "express": "^4.14.1",
     "glob": "^7.1.1",
     "handlebars": "^4.0.6",
