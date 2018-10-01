@@ -179,10 +179,10 @@ describe('stream-pages', function () {
             head: [
               {
                 foo: 'bar',
-                _ref: '/components/a/i'
+                _ref: '/_components/a/i'
               },
               {
-                _ref: '/components/withNoTemplate'
+                _ref: '/_components/withNoTemplate'
               }
             ],
             url: 'http://a/url.html'
