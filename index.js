@@ -76,14 +76,14 @@ function middleware(amphora, xmlOpts) {
  * @param  {object} amphora
  * @return {object} - This lib, with amphora bound to all methods that use it
  */
-module.exports = function (amphora) {
+module.exports = function (amphora, db) {
   return {
     middleware: middleware.bind(this, amphora),
     standardText: standardText.bind(this, amphora),
     standardXML: standardXML.bind(this, amphora),
-    streamPages: streamPages.bind(this, amphora),
-    filters: Filters(amphora),
-    transforms: Transforms(amphora),
+    streamPages: streamPages.bind(this, amphora, db),
+    filters: Filters(amphora, db),
+    transforms: Transforms(amphora, db),
     defaultXmlPrelude: DEFAULT_XML_PRELUDE,
     defaultXmlPostlude: DEFAULT_XML_POSTLUDE
   };
