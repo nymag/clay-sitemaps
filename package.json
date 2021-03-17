@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/nymag/clay-sitemaps#readme",
   "dependencies": {
-    "amphora": "^8.0.0-0",
-    "amphora-storage-postgres": "^2.0.0-0",
+    "amphora": "^8.0.0",
+    "amphora-storage-postgres": "^1.5.0",
     "express": "^4.14.1",
     "glob": "^7.1.1",
     "lodash": "^4.17.4",
