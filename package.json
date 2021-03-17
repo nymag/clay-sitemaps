@@ -1,6 +1,6 @@
 {
   "name": "clay-sitemaps",
-  "version": "1.0.0-0",
+  "version": "0.0.8",
   "description": "Add sitemaps to Clay sites.",
   "main": "index.js",
   "scripts": {
